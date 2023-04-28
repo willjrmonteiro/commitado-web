@@ -168,10 +168,11 @@ export const GetBills = () => {
     }
 
     return (
-                <div class="container">
-                <h1>Bills List</h1>
-                
-                <form class="form" onSubmit={handleSubmit}>
+                <div className="container">
+                <span className="title">
+                    <h1>Bills List</h1>
+                </span>
+                <form className="form" onSubmit={handleSubmit}>
                     <label for="name">Name:</label>
                     <input type="hidden" id="id" name="id" value={id} />
                     <input 
@@ -212,7 +213,7 @@ export const GetBills = () => {
                     <option value="PAID">PAID</option>
                     <option value="LATE">LATE</option>
                 </select>
-                <div class="actions">
+                <div className="actions">
                     <button
                         className="clear"
                         onClick={handleClearForm}
@@ -230,7 +231,7 @@ export const GetBills = () => {
                     </button> 
                 </div>
             </form>
-            <table class="table">
+            <table className="table">
                 <thead>
                     <tr>
                         <th>Name</th>
