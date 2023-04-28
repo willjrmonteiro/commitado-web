@@ -1,0 +1,145 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #292b2f;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 50px;
+  background-color: #1f2126;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+.table th {
+  background-color: #343a40;
+  color: #fff;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.form label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.form input[type="text"],
+.form input[type="number"],
+.form input[type="date"] {
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #1f2126;
+  color: #fff;
+}
+
+.form input[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.form input[type="submit"]:hover {
+  background-color: #0069d9;
+}
+
+select {
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #1f2126;
+  color: #fff;
+}
+
+select option {
+  background-color: #1f2126;
+  color: #fff;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.actions button {
+  background-color: #343a40;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.actions button:hover {
+  background-color: #172533;
+}
+
+.actions button:active {
+  background-color: #414141;
+}
+
+button.save {
+  background-color: darkgreen;
+  color: #fff;
+}
+
+button.save:hover {
+  background-color: darkolivegreen;
+  color: #fff;
+}
+
+button.save:active {
+  background-color: chartreuse;
+  color: #fff;
+}
+
+.action-icon {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btn-icon {
+  display: inline-flex;
+}
