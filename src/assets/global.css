@@ -120,17 +120,17 @@ select option {
 }
 
 button.save {
-  background-color: darkgreen;
+  background-color: #1f3e35;
   color: #fff;
 }
 
 button.save:hover {
-  background-color: darkolivegreen;
+  background-color: #08382a;
   color: #fff;
 }
 
 button.save:active {
-  background-color: chartreuse;
+  background-color: #034d38;
   color: #fff;
 }
 
