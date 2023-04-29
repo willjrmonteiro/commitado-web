@@ -1,5 +1,4 @@
-import React from 'react';
-import Loading from '../util/Loading';
+import Loading from "../util/Loading";
 
 export default function Query ({ loading, error, data, children }) {
     if (error) {

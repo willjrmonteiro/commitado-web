@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { BiTrash, BiSave, BiEdit, BiCalendarExclamation, BiCalendarCheck, BiCalendarX } from "react-icons/bi";
@@ -57,12 +57,23 @@ export const GetBills = () => {
     const [deadline, setDeadline] = useState("");
     const [status, setStatus] = useState("");
     const [amount, setAmount] = useState("");
+    const [statusFilter, setStatusFilter] = useState("");
+    const [dateFilter, setDateFilter] = useState("");
+    const [bills, setBills] = useState([]);
+    const [filteredBills, setFilteredBills] = useState([]);
 
     const { loading, error, data } = useQuery(BILLS_QUERY, { client });
     const [createBill] = useMutation(ADD_BILL, { client });
     const [updateBill] = useMutation(EDIT_BILL, { client });
     const [deleteBill] = useMutation(DELETE_BILL, { client });
     const [rendering, setRendering] = useState(false);
+
+    useEffect(() => {
+        if(!error && !loading) {
+            setBills(data.bills);
+            setFilteredBills(data.bills);
+        }
+      }, [data, error, loading])
 
     if (loading) return <Loading />;
     if (error) return <p>Error :{error.message}</p>;
@@ -123,6 +134,8 @@ export const GetBills = () => {
         setDeadline("");
         setStatus("");
         setAmount("");
+        setStatusFilter("");
+        setDateFilter("");
     }
 
     const handleUpdateBill = (e) => {
@@ -218,6 +231,26 @@ export const GetBills = () => {
         }
     }
 
+    const handlerFilterByStatus = (filter) => {
+        setStatusFilter(filter);
+        setDateFilter("");
+        if(filter === "")
+            setFilteredBills(bills);
+        else{
+            setFilteredBills(bills.filter((bill) => bill.status === filter));
+        }
+    }
+
+    const handlerFilterByDate = (filter) => {
+        setDateFilter(filter);
+        setStatusFilter("");
+        if(filter === "")
+            setFilteredBills(bills);
+        else{
+            setFilteredBills(bills.filter((bill) => bill.deadline.split('-')[1] === filter));
+        }
+    }
+
     return (
             <div className="container">     
                 {rendering && <Loading />}         
@@ -288,15 +321,46 @@ export const GetBills = () => {
                     <tr>
                         <th>Name</th>
                         <th>Amount</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
+                        <th>
+                        <select
+                                className="select"
+                                value={dateFilter}
+                                onChange={(e) => handlerFilterByDate(e.target.value)}
+                            >
+                                <option value="">DEADLINE</option>
+                                <option value="01">JAN</option>
+                                <option value="02">FEB</option>
+                                <option value="03">MAR</option>
+                                <option value="04">APR</option>
+                                <option value="05">MAY</option>
+                                <option value="06">JUN</option>
+                                <option value="07">JUL</option>
+                                <option value="08">AUG</option>
+                                <option value="09">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select> 
+                        </th>
+                        <th>
+                            <select
+                                className="select"
+                                value={statusFilter}
+                                onChange={(e) => handlerFilterByStatus(e.target.value)}
+                            >
+                                <option value="">STATUS</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="PAID">Paid</option>
+                                <option value="LATE">Late</option>
+                            </select>                        
+                        </th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <Query error={error} loading={loading} data={data}>
-                    {data.bills.map((bill) => (
+                    <Query error={error} loading={loading} data={filteredBills}>
+                    {filteredBills.map((bill) => (
                         <tr key={bill.id}>
                             <td>{bill.name}</td>
                             <td>{FormatMoney(bill.amount)}</td>

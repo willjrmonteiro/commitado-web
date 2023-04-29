@@ -90,12 +90,10 @@ select {
   padding: 10px;
   border: 1px solid #444;
   border-radius: 5px;
-  font-size: 16px;
   width: 100%;
   box-sizing: border-box;
   background-color: #1f2126;
   color: #fff;
-  margin-top: 15px;
 }
 
 select option {
