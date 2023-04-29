@@ -139,10 +139,15 @@ export const GetBills = () => {
                     amount
                 }
             },
-            refetchQueries: [{ query: BILLS_QUERY }]
+            refetchQueries: [{ query: BILLS_QUERY }],
+            onCompleted: () => {
+                resetState();
+            },
+            onError: (error) => {
+                alert('Não foi possível atualizar a conta :(');
+            }
         });
-
-        resetState();
+        
         setRendering(false);
     }
 
@@ -184,6 +189,9 @@ export const GetBills = () => {
             refetchQueries: [{ query: BILLS_QUERY }],
             onCompleted: () => {
                 resetState();
+            },
+            onError: (error) => {
+                alert('Não foi possível atualizar o status da conta :(');
             }
         });
 
