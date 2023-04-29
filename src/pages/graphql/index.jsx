@@ -66,7 +66,7 @@ export const GetBills = () => {
     const [name, setName] = useState("");
     const [deadline, setDeadline] = useState("");
     const [status, setStatus] = useState("");
-    const [amount, setAmount] = useState(null);
+    const [amount, setAmount] = useState("");
 
     const { loading, error, data } = useQuery(BILLS_QUERY, { client });
     const [createBill] = useMutation(ADD_BILL, { client });
@@ -110,7 +110,7 @@ export const GetBills = () => {
         setName("");
         setDeadline("");
         setStatus("");
-        setAmount(0);
+        setAmount("");
     }
 
 
@@ -158,13 +158,13 @@ export const GetBills = () => {
     const handleShowStatus = (status) => {
         switch (status) {
             case "PENDING":
-                return <BiCalendarExclamation className="action-icon" />
+                return <BiCalendarExclamation className="icon" />
             case "PAID":
-                return <BiCalendarCheck className="action-icon" />
+                return <BiCalendarCheck className="icon" />
             case "LATE":
-                return <BiCalendarX className="action-icon" />
+                return <BiCalendarX className="icon" />
             default:
-                return <BiCalendarExclamation className="action-icon" />
+                return <BiCalendarExclamation className="icon" />
         }
     }
 
@@ -218,13 +218,14 @@ export const GetBills = () => {
                 </div>
                 <div className="wrap-input">
                 <select
-                    className={"has-val input"} 
+                    className={"has-val input"}
                     id="status"
                     name="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     required
                 >
+                    <option value="">SELECT</option>
                     <option value="PENDING">PENDING</option>
                     <option value="PAID">PAID</option>
                     <option value="LATE">LATE</option>
@@ -266,7 +267,7 @@ export const GetBills = () => {
                             <td>{bill.name}</td>
                             <td>{bill.amount}</td>
                             <td>{bill.deadline}</td>
-                            <td><span className="action-icon">{handleShowStatus(bill.status)}</span></td> 
+                            <td><span className="icon">{handleShowStatus(bill.status)}</span></td> 
                             <td>
                             <span className="action-icon">
                             <BiEdit
