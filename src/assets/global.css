@@ -149,10 +149,38 @@ button.save:active {
   justify-content: center;
 }
 
+.icon:hover {
+  color: #21d4fd;
+}
+
+.icon:active {
+  color: #b721ff;
+}
+
+.yellow{
+  color: #f1c40f;
+}
+
+.icon.red{
+  color: red;
+}
+
+.green{
+  color: #2ecc71;
+}
+
 .action-icon {
   display: flex;
   justify-content: center;
   cursor: pointer;
+}
+
+.action-icon:hover{
+  color: #21d4fd;
+}
+
+.action-icon:active {
+  color: #b721ff;
 }
 
 .btn-icon {

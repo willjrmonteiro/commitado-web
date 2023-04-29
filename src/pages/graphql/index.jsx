@@ -64,21 +64,26 @@ export const GetBills = () => {
     if (error) return <p>Error :{error.message}</p>;
 
     const handleCreateBill = (e) => {
+        
         e.preventDefault();
         
-        setStatus(deadline > new Date().toISOString().slice(0,10) ? "LATE" : "PENDING");
+        const statusDefault = deadline > new Date().toISOString().slice(0,10) ? "PENDING" : "LATE";
+
+        console.log('status :' + status);
 
         createBill({
             variables: {
                 input: {
                     name,
                     deadline,
-                    status,
+                    status: statusDefault,
                     amount
                 }
             },
             refetchQueries: [{ query: BILLS_QUERY }]
         });
+
+        handleClearForm(e);
     }
 
     const handlePreUpdateBill = (bill) => {
@@ -95,14 +100,17 @@ export const GetBills = () => {
         
         e.preventDefault();
 
+        resetState();
+    }
+
+    const resetState = () =>{
+        
         setId("");
         setName("");
         setDeadline("");
         setStatus("");
         setAmount("");
     }
-
-
 
     const handleUpdateBill = (e) => {
 
@@ -120,6 +128,8 @@ export const GetBills = () => {
             },
             refetchQueries: [{ query: BILLS_QUERY }]
         });
+
+        handleClearForm(e);
     }
 
     const handleDeleteBill = (id) => {
@@ -135,7 +145,6 @@ export const GetBills = () => {
     const handleUpdateStatus = (bill) => {
 
         handlePreUpdateBill(bill);
-        setStatus("PAID");
         
         updateBill({
             variables: {
@@ -143,11 +152,14 @@ export const GetBills = () => {
                 input: {
                     name,
                     deadline,
-                    status,
+                    status: "PAID",
                     amount
                 }
             },
-            refetchQueries: [{ query: BILLS_QUERY }]
+            refetchQueries: [{ query: BILLS_QUERY }],
+            onCompleted: () => {
+                resetState();
+            }
         });
     }   
 
@@ -160,13 +172,13 @@ export const GetBills = () => {
     const handleShowStatus = (status) => {
         switch (status) {
             case "PENDING":
-                return <BiCalendarExclamation className="action-icon" />
+                return <BiCalendarExclamation className="icon yellow" />
             case "PAID":
-                return <BiCalendarCheck className="action-icon" />
+                return <BiCalendarCheck className="icon green" />
             case "LATE":
-                return <BiCalendarX className="action-icon" />
+                return <BiCalendarX className="icon red" />
             default:
-                return <BiCalendarExclamation className="action-icon" />
+                return <BiCalendarExclamation className="icon" />
         }
     }
 
@@ -260,24 +272,23 @@ export const GetBills = () => {
                             onClick={(e) => handleUpdateStatus(bill)}
                             >{handleShowStatus(bill.status)}</span></td> 
                             <td>
-                            <span className="action-icon">
-                            <BiEdit
+                            <span 
                                 className="action-icon"
                                 value={bill.id}                            
                                 onClick={ (e) => handlePreUpdateBill(bill)}
-                                />
-                                </span>
+                            >
+                                <BiEdit />
+                            </span>
                             </td>               
                             <td>
-                            <span className="action-icon">
-                                <BiTrash
-                                    className="action-icon"
-                                    value={bill.id}                            
-                                    onClick={ (e) => handleDeleteBill(bill.id)}
-                                />
-                                </span>
+                            <span
+                                className="action-icon"
+                                value={bill.id}                            
+                                onClick={ (e) => handleDeleteBill(bill.id)}
+                            >
+                                <BiTrash />
+                            </span>
                             </td>
-                        
                     </tr>
                     ))}
                 </tbody>
