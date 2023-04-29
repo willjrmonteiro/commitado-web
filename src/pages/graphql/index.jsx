@@ -100,7 +100,11 @@ export const GetBills = () => {
         
         e.preventDefault();
 
-        resetState();
+        if(window.confirm("Deseja limpar o formulário?")){
+            resetState();
+        }else{
+            resetState();
+        }        
     }
 
     const resetState = () =>{
@@ -134,15 +138,22 @@ export const GetBills = () => {
 
     const handleDeleteBill = (id) => {
 
+        if(!window.confirm("Deseja realmente exluir esta conta?"))
+            return;
+
         deleteBill({
             variables: {
                 id
             },
             refetchQueries: [{ query: BILLS_QUERY }]
         });
+        
     }
 
     const handleUpdateStatus = (bill) => {
+
+        if(!window.confirm("Deseja confirmar o pagamento desta conta?"))
+            return;
 
         handlePreUpdateBill(bill);
         
