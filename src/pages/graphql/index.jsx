@@ -179,18 +179,22 @@ export const GetBills = () => {
                                     
                 </div>
                 <form className="form" onSubmit={handleSubmit}>
-                    <label for="name">Name:</label>
                     <input type="hidden" id="id" name="id" value={id} />
-                    <input 
-                        type="text" 
-                        id="name" 
-                        name="name" 
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required 
-                    />
-                    <label for="amount">Amount:</label>
-                    <input 
+                    <div className="wrap-input">
+                        <input 
+                            className={name !== "" ? "has-val input" : "input"}
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required 
+                        />
+                    <span className="focus-input" data-placeholder="Nome"></span>
+                    </div>
+                    <div className="wrap-input">
+                    <input
+                        className={amount !== "" ? "has-val input" : "input"}
                         type="number" 
                         id="amount" 
                         name="amount" 
@@ -198,8 +202,11 @@ export const GetBills = () => {
                         onChange={(e) => setAmount(e.target.value)}
                         required 
                     />
-                <label for="due-date">Due Date:</label>
+                    <span className="focus-input" data-placeholder="Valor"></span>
+                    </div>
+                    <div className="wrap-input">
                 <input 
+                    className={"has-val input"}
                     type="date" 
                     id="deadline"
                     name="deadline"
@@ -207,8 +214,11 @@ export const GetBills = () => {
                     onChange={(e) => setDeadline(e.target.value)}
                     required
                 />
-                <label for="status">Status:</label>
-                <select 
+                <span className="focus-input" data-placeholder="Vencimento"></span>
+                </div>
+                <div className="wrap-input">
+                <select
+                    className={"has-val input"} 
                     id="status"
                     name="status"
                     value={status}
@@ -219,6 +229,8 @@ export const GetBills = () => {
                     <option value="PAID">PAID</option>
                     <option value="LATE">LATE</option>
                 </select>
+                <span className="focus-input" data-placeholder="Status"></span>
+                </div>
                 <div className="actions">
                     <button
                         className="clear"
