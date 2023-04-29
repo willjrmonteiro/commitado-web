@@ -23,18 +23,6 @@ const BILLS_QUERY = gql`
     }
 `;
 
-const VIEW_BILL = gql`
-  query ($id: Int){
-    bill(id: $id) {
-        id,
-        name,
-        deadline,
-        status,
-        amount
-    }
-  }
-`;
-
 const ADD_BILL = gql`
   mutation createBill($input: CreateBillInput!){
     createBill(input: $input){
@@ -74,7 +62,7 @@ export const GetBills = () => {
     const [deleteBill] = useMutation(DELETE_BILL, { client });
 
     if (loading) return <div className="loading" ></div>;
-    if (error) return <p>Error :(</p>;
+    if (error) return <p>Error :{error.message}</p>;
 
     const handleCreateBill = (e) => {
         e.preventDefault();
@@ -141,12 +129,6 @@ export const GetBills = () => {
             },
             refetchQueries: [{ query: BILLS_QUERY }]
         });
-    }
-
-    const handleViewBill = (e) => {
-        e.preventDefault();
-        setId(e.target.value);
-        alert(id);
     }
 
     const handleSubmit = (e) => {
