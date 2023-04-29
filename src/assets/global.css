@@ -143,3 +143,33 @@ button.save:active {
 .btn-icon {
   display: inline-flex;
 }
+
+.header {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.loading {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.834)
+      url("./img/loading.gif") center
+      no-repeat;
+  z-index: 1;
+}

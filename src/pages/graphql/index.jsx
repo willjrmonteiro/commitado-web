@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { BiTrash, BiSave, BiEdit, BiCalendarExclamation, BiCalendarCheck, BiCalendarX } from "react-icons/bi";
+import { FaCalendarCheck } from "react-icons/fa";
 
 
 const client = new ApolloClient({
@@ -72,7 +73,7 @@ export const GetBills = () => {
     const [updateBill] = useMutation(EDIT_BILL, { client });
     const [deleteBill] = useMutation(DELETE_BILL, { client });
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <div className="loading" ></div>;
     if (error) return <p>Error :(</p>;
 
     const handleCreateBill = (e) => {
@@ -169,9 +170,14 @@ export const GetBills = () => {
 
     return (
                 <div className="container">
-                <span className="title">
-                    <h1>Bills List</h1>
-                </span>
+                <div className="header">
+                <FaCalendarCheck className="logo" />
+                    <span className="title">
+                        Commitado
+                    </span>
+                        
+                                    
+                </div>
                 <form className="form" onSubmit={handleSubmit}>
                     <label for="name">Name:</label>
                     <input type="hidden" id="id" name="id" value={id} />
