@@ -69,8 +69,6 @@ export const GetBills = () => {
         
         const statusDefault = deadline > new Date().toISOString().slice(0,10) ? "PENDING" : "LATE";
 
-        console.log('status :' + status);
-
         createBill({
             variables: {
                 input: {
