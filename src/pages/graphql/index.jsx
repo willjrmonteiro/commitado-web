@@ -3,6 +3,7 @@ import { useQuery, gql, useMutation } from "@apollo/client";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { BiTrash, BiSave, BiEdit, BiCalendarExclamation, BiCalendarCheck, BiCalendarX } from "react-icons/bi";
 import { FaCalendarCheck } from "react-icons/fa";
+import {GiTwoCoins} from "react-icons/gi";
 import Loading from "../../components/util/Loading";
 import Query from "../../components/graphql/query";
 import FormatMoney from "../../components/util/format";
@@ -259,6 +260,12 @@ export const GetBills = () => {
                     <span className="title">
                         Commitado
                     </span>         
+                </div>
+                <div className="resume">
+                    <GiTwoCoins className="icon icon-title" />
+                    <span className="total">
+                        Outstanding: R$ {bills.filter((bill) => bill.status !== "PAID").reduce((total, bill) => total + bill.amount, 0).toFixed(2)}
+                    </span>
                 </div>
                 <form className="form" onSubmit={handleSubmit}>
                     <input type="hidden" id="id" name="id" value={id} />

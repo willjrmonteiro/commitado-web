@@ -16,6 +16,12 @@ body {
   overflow: hidden;
 }
 
+.resume{
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -196,6 +202,10 @@ button.save:active {
   font-size: 24px;
   font-weight: bold;
   margin: 10px;
+}
+
+.icon-title {
+  margin: 0 5px;
 }
 
 .logo {
