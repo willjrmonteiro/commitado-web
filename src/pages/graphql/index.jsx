@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { BiTrash, BiSave, BiEdit, BiCalendarExclamation, BiCalendarCheck, BiCalendarX } from "react-icons/bi";
 import { FaCalendarCheck } from "react-icons/fa";
+import {GiTwoCoins} from "react-icons/gi";
+import Loading from "../../components/util/Loading";
+import Query from "../../components/graphql/query";
+import FormatMoney from "../../components/util/format";
 
 const client = new ApolloClient({
     uri: "http://localhost:8080/query",
@@ -54,18 +58,32 @@ export const GetBills = () => {
     const [deadline, setDeadline] = useState("");
     const [status, setStatus] = useState("");
     const [amount, setAmount] = useState("");
+    const [statusFilter, setStatusFilter] = useState("");
+    const [dateFilter, setDateFilter] = useState("");
+    const [bills, setBills] = useState([]);
+    const [filteredBills, setFilteredBills] = useState([]);
 
     const { loading, error, data } = useQuery(BILLS_QUERY, { client });
     const [createBill] = useMutation(ADD_BILL, { client });
     const [updateBill] = useMutation(EDIT_BILL, { client });
     const [deleteBill] = useMutation(DELETE_BILL, { client });
+    const [rendering, setRendering] = useState(false);
 
-    if (loading) return <div className="loading" ></div>;
+    useEffect(() => {
+        if(!error && !loading) {
+            setBills(data.bills);
+            setFilteredBills(data.bills);
+        }
+      }, [data, error, loading])
+
+    if (loading) return <Loading />;
     if (error) return <p>Error :{error.message}</p>;
 
     const handleCreateBill = (e) => {
         
         e.preventDefault();
+
+        setRendering(true);
         
         const statusDefault = deadline > new Date().toISOString().slice(0,10) ? "PENDING" : "LATE";
 
@@ -82,6 +100,7 @@ export const GetBills = () => {
         });
 
         resetState();
+        setRendering(false);
     }
 
     const handlePreUpdateBill = (bill) => {
@@ -97,12 +116,16 @@ export const GetBills = () => {
     const handleClearForm = (e) => {
         
         e.preventDefault();
+        setRendering(true);
 
         if(window.confirm("Deseja limpar o formulário?")){
             resetState();
+            setRendering(false);           
         }else{
-            resetState();
+            setRendering(false);
+            return;
         }        
+        
     }
 
     const resetState = () =>{
@@ -112,11 +135,14 @@ export const GetBills = () => {
         setDeadline("");
         setStatus("");
         setAmount("");
+        setStatusFilter("");
+        setDateFilter("");
     }
 
     const handleUpdateBill = (e) => {
 
         e.preventDefault();
+        setRendering(true);
         
         updateBill({
             variables: {
@@ -128,10 +154,16 @@ export const GetBills = () => {
                     amount
                 }
             },
-            refetchQueries: [{ query: BILLS_QUERY }]
+            refetchQueries: [{ query: BILLS_QUERY }],
+            onCompleted: () => {
+                resetState();
+            },
+            onError: (error) => {
+                alert('Não foi possível atualizar a conta :(');
+            }
         });
-
-        resetState();
+        
+        setRendering(false);
     }
 
     const handleDeleteBill = (id) => {
@@ -139,13 +171,16 @@ export const GetBills = () => {
         if(!window.confirm("Deseja realmente exluir esta conta?"))
             return;
 
+        setRendering(true);
+        
         deleteBill({
             variables: {
                 id
             },
             refetchQueries: [{ query: BILLS_QUERY }]
         });
-        
+
+        setRendering(false);        
     }
 
     const handleUpdateStatus = (bill) => {
@@ -153,6 +188,7 @@ export const GetBills = () => {
         if(!window.confirm("Deseja confirmar o pagamento desta conta?"))
             return;
 
+        setRendering(true);
         handlePreUpdateBill(bill);
         
         updateBill({
@@ -168,8 +204,13 @@ export const GetBills = () => {
             refetchQueries: [{ query: BILLS_QUERY }],
             onCompleted: () => {
                 resetState();
+            },
+            onError: (error) => {
+                alert('Não foi possível atualizar o status da conta :(');
             }
         });
+
+        setRendering(false);
     }   
 
     const handleSubmit = (e) => {
@@ -191,18 +232,40 @@ export const GetBills = () => {
         }
     }
 
-    return (
-                <div className="container">
+    const handlerFilterByStatus = (filter) => {
+        setStatusFilter(filter);
+        setDateFilter("");
+        if(filter === "")
+            setFilteredBills(bills);
+        else{
+            setFilteredBills(bills.filter((bill) => bill.status === filter));
+        }
+    }
 
-            
-                 
+    const handlerFilterByDate = (filter) => {
+        setDateFilter(filter);
+        setStatusFilter("");
+        if(filter === "")
+            setFilteredBills(bills);
+        else{
+            setFilteredBills(bills.filter((bill) => bill.deadline.split('-')[1] === filter));
+        }
+    }
+
+    return (
+            <div className="container">     
+                {rendering && <Loading />}         
                 <div className="header">
                 <FaCalendarCheck className="logo" />
                     <span className="title">
                         Commitado
+                    </span>         
+                </div>
+                <div className="resume">
+                    <GiTwoCoins className="icon icon-title" />
+                    <span className="total">
+                        Outstanding: R$ {bills.filter((bill) => bill.status !== "PAID").reduce((total, bill) => total + bill.amount, 0).toFixed(2)}
                     </span>
-                        
-                                    
                 </div>
                 <form className="form" onSubmit={handleSubmit}>
                     <input type="hidden" id="id" name="id" value={id} />
@@ -265,17 +328,49 @@ export const GetBills = () => {
                     <tr>
                         <th>Name</th>
                         <th>Amount</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
+                        <th>
+                        <select
+                                className="select"
+                                value={dateFilter}
+                                onChange={(e) => handlerFilterByDate(e.target.value)}
+                            >
+                                <option value="">DEADLINE</option>
+                                <option value="01">JAN</option>
+                                <option value="02">FEB</option>
+                                <option value="03">MAR</option>
+                                <option value="04">APR</option>
+                                <option value="05">MAY</option>
+                                <option value="06">JUN</option>
+                                <option value="07">JUL</option>
+                                <option value="08">AUG</option>
+                                <option value="09">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select> 
+                        </th>
+                        <th>
+                            <select
+                                className="select"
+                                value={statusFilter}
+                                onChange={(e) => handlerFilterByStatus(e.target.value)}
+                            >
+                                <option value="">STATUS</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="PAID">Paid</option>
+                                <option value="LATE">Late</option>
+                            </select>                        
+                        </th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.bills.map((bill) => (
+                    <Query error={error} loading={loading} data={filteredBills}>
+                    {filteredBills.map((bill) => (
                         <tr key={bill.id}>
                             <td>{bill.name}</td>
-                            <td>{bill.amount}</td>
+                            <td>{FormatMoney(bill.amount)}</td>
                             <td>{bill.deadline}</td>
                             <td><span className="action-icon"
                             onClick={(e) => handleUpdateStatus(bill)}
@@ -300,6 +395,7 @@ export const GetBills = () => {
                             </td>
                     </tr>
                     ))}
+                    </Query>
                 </tbody>
             </table>
         </div>
