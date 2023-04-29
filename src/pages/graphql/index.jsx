@@ -3,6 +3,8 @@ import { useQuery, gql, useMutation } from "@apollo/client";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { BiTrash, BiSave, BiEdit, BiCalendarExclamation, BiCalendarCheck, BiCalendarX } from "react-icons/bi";
 import { FaCalendarCheck } from "react-icons/fa";
+import Loading from "../../components/util/Loading";
+import Query from "../../components/graphql/query";
 
 const client = new ApolloClient({
     uri: "http://localhost:8080/query",
@@ -59,17 +61,18 @@ export const GetBills = () => {
     const [createBill] = useMutation(ADD_BILL, { client });
     const [updateBill] = useMutation(EDIT_BILL, { client });
     const [deleteBill] = useMutation(DELETE_BILL, { client });
+    const [rendering, setRendering] = useState(false);
 
-    if (loading) return <div className="loading" ></div>;
+    if (loading) return <Loading />;
     if (error) return <p>Error :{error.message}</p>;
 
     const handleCreateBill = (e) => {
         
         e.preventDefault();
+
+        setRendering(true);
         
         const statusDefault = deadline > new Date().toISOString().slice(0,10) ? "PENDING" : "LATE";
-
-        console.log('status :' + status);
 
         createBill({
             variables: {
@@ -84,6 +87,7 @@ export const GetBills = () => {
         });
 
         resetState();
+        setRendering(false);
     }
 
     const handlePreUpdateBill = (bill) => {
@@ -99,12 +103,16 @@ export const GetBills = () => {
     const handleClearForm = (e) => {
         
         e.preventDefault();
+        setRendering(true);
 
         if(window.confirm("Deseja limpar o formulário?")){
             resetState();
+            setRendering(false);           
         }else{
-            resetState();
+            setRendering(false);
+            return;
         }        
+        
     }
 
     const resetState = () =>{
@@ -119,6 +127,7 @@ export const GetBills = () => {
     const handleUpdateBill = (e) => {
 
         e.preventDefault();
+        setRendering(true);
         
         updateBill({
             variables: {
@@ -134,6 +143,7 @@ export const GetBills = () => {
         });
 
         resetState();
+        setRendering(false);
     }
 
     const handleDeleteBill = (id) => {
@@ -141,13 +151,16 @@ export const GetBills = () => {
         if(!window.confirm("Deseja realmente exluir esta conta?"))
             return;
 
+        setRendering(true);
+        
         deleteBill({
             variables: {
                 id
             },
             refetchQueries: [{ query: BILLS_QUERY }]
         });
-        
+
+        setRendering(false);        
     }
 
     const handleUpdateStatus = (bill) => {
@@ -155,6 +168,7 @@ export const GetBills = () => {
         if(!window.confirm("Deseja confirmar o pagamento desta conta?"))
             return;
 
+        setRendering(true);
         handlePreUpdateBill(bill);
         
         updateBill({
@@ -172,6 +186,8 @@ export const GetBills = () => {
                 resetState();
             }
         });
+
+        setRendering(false);
     }   
 
     const handleSubmit = (e) => {
@@ -194,17 +210,13 @@ export const GetBills = () => {
     }
 
     return (
-                <div className="container">
-
-            
-                 
+            <div className="container">     
+                {rendering && <Loading />}         
                 <div className="header">
                 <FaCalendarCheck className="logo" />
                     <span className="title">
                         Commitado
-                    </span>
-                        
-                                    
+                    </span>         
                 </div>
                 <form className="form" onSubmit={handleSubmit}>
                     <input type="hidden" id="id" name="id" value={id} />
@@ -274,6 +286,7 @@ export const GetBills = () => {
                     </tr>
                 </thead>
                 <tbody>
+                    <Query error={error} loading={loading} data={data}>
                     {data.bills.map((bill) => (
                         <tr key={bill.id}>
                             <td>{bill.name}</td>
@@ -302,6 +315,7 @@ export const GetBills = () => {
                             </td>
                     </tr>
                     ))}
+                    </Query>
                 </tbody>
             </table>
         </div>
