@@ -133,7 +133,7 @@ export const GetBills = () => {
             refetchQueries: [{ query: BILLS_QUERY }]
         });
 
-        handleClearForm(e);
+        resetState();
     }
 
     const handleDeleteBill = (id) => {
