@@ -5,6 +5,7 @@ import { BiTrash, BiSave, BiEdit, BiCalendarExclamation, BiCalendarCheck, BiCale
 import { FaCalendarCheck } from "react-icons/fa";
 import Loading from "../../components/util/Loading";
 import Query from "../../components/graphql/query";
+import FormatMoney from "../../components/util/format";
 
 const client = new ApolloClient({
     uri: "http://localhost:8080/query",
@@ -298,7 +299,7 @@ export const GetBills = () => {
                     {data.bills.map((bill) => (
                         <tr key={bill.id}>
                             <td>{bill.name}</td>
-                            <td>{bill.amount}</td>
+                            <td>{FormatMoney(bill.amount)}</td>
                             <td>{bill.deadline}</td>
                             <td><span className="action-icon"
                             onClick={(e) => handleUpdateStatus(bill)}
