@@ -4,7 +4,6 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { BiTrash, BiSave, BiEdit, BiCalendarExclamation, BiCalendarCheck, BiCalendarX } from "react-icons/bi";
 import { FaCalendarCheck } from "react-icons/fa";
 
-
 const client = new ApolloClient({
     uri: "http://localhost:8080/query",
     cache: new InMemoryCache()
@@ -67,6 +66,8 @@ export const GetBills = () => {
     const handleCreateBill = (e) => {
         e.preventDefault();
         
+        setStatus(deadline > new Date().toISOString().slice(0,10) ? "LATE" : "PENDING");
+
         createBill({
             variables: {
                 input: {
@@ -122,7 +123,7 @@ export const GetBills = () => {
     }
 
     const handleDeleteBill = (id) => {
-        alert(id);
+
         deleteBill({
             variables: {
                 id
@@ -130,6 +131,25 @@ export const GetBills = () => {
             refetchQueries: [{ query: BILLS_QUERY }]
         });
     }
+
+    const handleUpdateStatus = (bill) => {
+
+        handlePreUpdateBill(bill);
+        setStatus("PAID");
+        
+        updateBill({
+            variables: {
+                id,
+                input: {
+                    name,
+                    deadline,
+                    status,
+                    amount
+                }
+            },
+            refetchQueries: [{ query: BILLS_QUERY }]
+        });
+    }   
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -140,18 +160,21 @@ export const GetBills = () => {
     const handleShowStatus = (status) => {
         switch (status) {
             case "PENDING":
-                return <BiCalendarExclamation className="icon" />
+                return <BiCalendarExclamation className="action-icon" />
             case "PAID":
-                return <BiCalendarCheck className="icon" />
+                return <BiCalendarCheck className="action-icon" />
             case "LATE":
-                return <BiCalendarX className="icon" />
+                return <BiCalendarX className="action-icon" />
             default:
-                return <BiCalendarExclamation className="icon" />
+                return <BiCalendarExclamation className="action-icon" />
         }
     }
 
     return (
                 <div className="container">
+
+            
+                 
                 <div className="header">
                 <FaCalendarCheck className="logo" />
                     <span className="title">
@@ -198,22 +221,6 @@ export const GetBills = () => {
                 />
                 <span className="focus-input" data-placeholder="Vencimento"></span>
                 </div>
-                <div className="wrap-input">
-                <select
-                    className={"has-val input"}
-                    id="status"
-                    name="status"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    required
-                >
-                    <option value="">SELECT</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="PAID">PAID</option>
-                    <option value="LATE">LATE</option>
-                </select>
-                <span className="focus-input" data-placeholder="Status"></span>
-                </div>
                 <div className="actions">
                     <button
                         className="clear"
@@ -249,7 +256,9 @@ export const GetBills = () => {
                             <td>{bill.name}</td>
                             <td>{bill.amount}</td>
                             <td>{bill.deadline}</td>
-                            <td><span className="icon">{handleShowStatus(bill.status)}</span></td> 
+                            <td><span className="action-icon"
+                            onClick={(e) => handleUpdateStatus(bill)}
+                            >{handleShowStatus(bill.status)}</span></td> 
                             <td>
                             <span className="action-icon">
                             <BiEdit
